@@ -83,9 +83,12 @@ spectra_analysis <- function(i_spectra,
   return(spq_summary)
 }
 
+# Includes PCA and ICA
 feat.PCA <- function(spq_summary, max.na = 0.025, min.SNR = 2) {
   require(missForest)
-
+  #require(ica)
+  #require(fastICA)
+  
   # Build feature matrix
   peaks.features <- dcast(spq_summary$grouped[peakSNR >= min.SNR],
                           sample ~ peakIndex,
@@ -118,8 +121,10 @@ feat.PCA <- function(spq_summary, max.na = 0.025, min.SNR = 2) {
   keep_feat <- spq_summary$filled[!(ppm < 0.4 | (ppm > 4.4 & ppm < 6.01)),
                                   as.character(unique(peakIndex))]
   keep_feat <- keep_feat[keep_feat %in% colnames(peaks.features)]
+  # ft.tab.scaled <- speaq::SCANT(data.matrix = peaks.features[,keep_feat],
+  #                               type = c("center","unit"))
   ft.tab.scaled <- speaq::SCANT(data.matrix = peaks.features[,keep_feat],
-                                type = c("center","unit"))
+                                type = c("center","pareto"))
 
   message("PCA on ",ncol(ft.tab.scaled)," features.")
 
@@ -134,7 +139,40 @@ feat.PCA <- function(spq_summary, max.na = 0.025, min.SNR = 2) {
                           importance = summary(ft.pca)$importance,
                           pca.object = ft.pca)
 
-
+  
+  #––––––––––––––––––––––––––––––––––––––#
+  # Independent component analysis (ICA) #
+  #––––––––––––––––––––––––––––––––––––––#
+  #nics <- ncol(ft.tab.scaled)
+  # nics <- 2
+  # ft.ica <- ica(ft.tab.scaled, nics, method = "fast", maxit = 5000)
+  # dt.ica <- cbind(data.table(sample = spq_summary$color$sample),
+  #                 ft.ica$S)
+  # dt.ica <- merge(dt.ica, spq_summary$color)
+  # dt.ica.loading <- cbind(data.table(feat = colnames(ft.tab.scaled)),
+  #                         ft.ica$M)
+  # spq_summary$ICA <- list(scores = dt.ica,
+  #                         loadings = dt.ica.loading,
+  #                         importance = ft.ica$vafs,
+  #                         ica.object = ft.ica)
+  # names(spq_summary$ICA$importance) <- paste0("V",1:nics)
+  
+  # 2 
+  nics <- 3
+  ft.ica <- ica::icafast(ft.tab.scaled, nics)
+  dt.ica <- cbind(data.table(sample = spq_summary$color$sample),
+                  ft.ica$S)
+  setnames(dt.ica, paste0("V",1:nics),paste0("IC",1:nics))
+  dt.ica <- merge(dt.ica, spq_summary$color)
+  dt.ica.loading <- cbind(data.table(feat = colnames(ft.tab.scaled)),
+                          t(ft.ica$W))
+  setnames(dt.ica.loading, paste0("V",1:nics),paste0("IC",1:nics))
+  spq_summary$ICA <- list(scores = dt.ica,
+                          loadings = dt.ica.loading,
+                          importance = ft.ica$vafs,
+                          ica.object = ft.ica)
+  names(spq_summary$ICA$importance) <- paste0("IC",1:nics)
+  
   # output
   return(spq_summary)
 

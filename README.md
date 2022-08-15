@@ -13,6 +13,7 @@ This repository contains the point-wise binned NMR spectra as well as the data a
   - `bit64` (v. 4.0.5)
   - `egg` (v. 0.4.5)
   - `missForest` (v. 1.4)
+  - `ica` (v 1.0-3)
 
 ## Repository structure
 

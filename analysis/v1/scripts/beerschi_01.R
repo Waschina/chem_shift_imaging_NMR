@@ -41,15 +41,19 @@ beerschi$spectra.norm <- beerschi$spectra.norm / max(beerschi$spectra.norm) * ma
 
 beer_H <- spectra_analysis(beerschi$spectra.norm[as.character(beerschi$info$exp.H),],
                            beerschi$ppm,
-                           beerschi$info$color)
+                           beerschi$info$color2)
 
 beer_L <- spectra_analysis(beerschi$spectra.norm[as.character(beerschi$info$exp.L),],
                            beerschi$ppm,
-                           beerschi$info$color)
+                           beerschi$info$color2)
 
 beer_G <- spectra_analysis(beerschi$spectra.norm[as.character(beerschi$info$exp.G),],
                            beerschi$ppm,
-                           beerschi$info$color)
+                           beerschi$info$color2)
+
+# plots for response letter
+source("analysis/v1/scripts/beerschi_ROI_plots.R")
+
 
 # PCA
 beer_H <- feat.PCA(beer_H, max.na = 0.05)
@@ -67,6 +71,12 @@ pairs(beer_G$PCA$scores[,2:6],
       main = "Bierschinken (G)", col = as.factor(beerschi$info$color2))
 dev.off()
 
+pairs(beer_L$ICA$scores[,2:3],
+      main = "Bierschinken (L)", col = as.factor(beerschi$info$color2))
+pairs(beer_H$ICA$scores[,2:3],
+      main = "Bierschinken (H)", col = as.factor(beerschi$info$color2))
+pairs(beer_G$ICA$scores[,2:3],
+      main = "Bierschinken (G)", col = as.factor(beerschi$info$color2))
 
 # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ #
 # PCA Plot only for (L) #
@@ -487,24 +497,8 @@ ggsave("analysis/v1/plots/bierschinken_G_PC1_PC2.pdf", plot = p_dist_pc12,
 
 
 
+#–––––––––––––––––––––––––––#
+# ICA Plots for supplements #
+#–––––––––––––––––––––––––––#
+source("analysis/v1/scripts/beerschi_01_ICA.R")
 
-
-
-
-
-
-
-# pairs(beer_L$PCA$scores[,2:6],
-#       col = as.factor(beer_L$PCA$scores$color), main = "Bierschinken (L)")
-# pairs(beer_H$PCA$scores[,2:6],
-#       col = as.factor(beer_H$PCA$scores$color), main = "Bierschinken (H)")
-# pairs(beer_G$PCA$scores[,2:6],
-#       col = as.factor(beer_G$PCA$scores$color), main = "Bierschinken (G)")
-# dev.off()
-# 
-# 
-# ROI.ppm <- 6.1
-# roiWidth.ppm <- 0.1
-# 
-# ROIplot_SW(beer_H, ROI = ROI.ppm, ROI.width = roiWidth.ppm,
-#            color.code = MetBrewer::met.brewer("Isfahan2",7))

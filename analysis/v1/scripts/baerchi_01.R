@@ -47,6 +47,9 @@ baer_G <- spectra_analysis(baerchi$spectra.norm[as.character(baerchi$info$exp.G)
                            baerchi$ppm,
                            baerchi$info$color)
 
+# plots for response letter
+source("analysis/v1/scripts/baerchi_ROI_plots.R")
+
 # PCA
 baer_H <- feat.PCA(baer_H, max.na = 0.05)
 baer_L <- feat.PCA(baer_L, max.na = 0.05)
@@ -471,38 +474,42 @@ ggsave("analysis/v1/plots/baerchen_G_PC1_PC2.pdf", plot = p_dist_pc12,
        width = 5.25, height = 3.25)
 
 
+#–––––––––––––––––––––––––––#
+# ICA Plots for supplements #
+#–––––––––––––––––––––––––––#
+source("analysis/v1/scripts/baerchi_01_ICA.R")
 
 
 
 
 
 
-ROI.ppm <- 3.03
-roiWidth.ppm <- 0.05
-
-ROIplot_SW(baer_H, ROI = ROI.ppm, ROI.width = roiWidth.ppm,
-           color.code = MetBrewer::met.brewer("Isfahan2",3))
-
-any(is.na(baer_H$feat.tab[1:10,1:10]))
-
-erni <- dcast(baer_L$grouped[peakSNR >= 2], sample ~ peakIndex, value.var = "peakValue")
-tmpnames <- rownames(erni)
-erni <- as.matrix(erni[,-1])
-rownames(erni) <- tmpnames
-erni <- erni[,apply(erni,
-                    2,
-                    function(x) sum(is.na(x))) <= nrow(erni) * 0.05]
-# imputation with kNN (only features, which occur in at least 97.5% of samples)
-#peaks.features[which(peaks.features == 0, arr.ind = TRUE)] <- NA
-erni_ci <- apply(erni, 2, quantile, na.rm = TRUE, prob = c(0.025, 0.975))
-up_rm <- which(t(erni) > erni_ci[2,] + (erni_ci[2,] - erni_ci[1,]), arr.ind = TRUE)
-dw_rm <- which(t(erni) < erni_ci[1,] - (erni_ci[2,] - erni_ci[1,]), arr.ind = TRUE)
-
-erni[up_rm[,c(2,1)]] <- NA
-erni[dw_rm[,c(2,1)]] <- NA
-
-baer_L$grouped[peakIndex %in% rownames(up_rm)][order(-peakValue)][!duplicated(peakIndex)]
-
-
-erni2 <- missForest::missForest(erni)$ximp
+# ROI.ppm <- 3.03
+# roiWidth.ppm <- 0.05
+# 
+# ROIplot_SW(baer_H, ROI = ROI.ppm, ROI.width = roiWidth.ppm,
+#            color.code = MetBrewer::met.brewer("Isfahan2",3))
+# 
+# any(is.na(baer_H$feat.tab[1:10,1:10]))
+# 
+# erni <- dcast(baer_L$grouped[peakSNR >= 2], sample ~ peakIndex, value.var = "peakValue")
+# tmpnames <- rownames(erni)
+# erni <- as.matrix(erni[,-1])
+# rownames(erni) <- tmpnames
+# erni <- erni[,apply(erni,
+#                     2,
+#                     function(x) sum(is.na(x))) <= nrow(erni) * 0.05]
+# # imputation with kNN (only features, which occur in at least 97.5% of samples)
+# #peaks.features[which(peaks.features == 0, arr.ind = TRUE)] <- NA
+# erni_ci <- apply(erni, 2, quantile, na.rm = TRUE, prob = c(0.025, 0.975))
+# up_rm <- which(t(erni) > erni_ci[2,] + (erni_ci[2,] - erni_ci[1,]), arr.ind = TRUE)
+# dw_rm <- which(t(erni) < erni_ci[1,] - (erni_ci[2,] - erni_ci[1,]), arr.ind = TRUE)
+# 
+# erni[up_rm[,c(2,1)]] <- NA
+# erni[dw_rm[,c(2,1)]] <- NA
+# 
+# baer_L$grouped[peakIndex %in% rownames(up_rm)][order(-peakValue)][!duplicated(peakIndex)]
+# 
+# 
+# erni2 <- missForest::missForest(erni)$ximp
 

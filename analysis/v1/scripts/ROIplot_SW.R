@@ -1,5 +1,6 @@
 ROIplot_SW <- function(spq_summary, ROI = 2.15, ROI.width = 0.05,
-                       alpha = 0.5, color.code = NULL) {
+                       alpha = 0.5, color.code = NULL,
+                       incl.plots = c(1,2,3,4)) {
   require(egg)
 
   tmp1 <- copy(spq_summary$spectra[ppm >= ROI - ROI.width*1.1 & ppm <= ROI + ROI.width*1.1])
@@ -10,11 +11,14 @@ ROIplot_SW <- function(spq_summary, ROI = 2.15, ROI.width = 0.05,
     coord_cartesian(xlim = c(ROI + ROI.width, ROI - ROI.width),
                     ylim = c(min(tmp1$value), max(tmp1$value))) +
     geom_line(alpha = alpha) +
+    facet_grid(.~color) +
     theme_bw() +
     ylab("Signal intensity") +
+    ggtitle("Raw spectra") +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          panel.background = element_blank())
+          panel.background = element_blank(),
+          legend.position = "none")
   if(!is.null(color.code))
     p1 <- p1 + scale_color_manual(values = color.code)
 
@@ -28,10 +32,13 @@ ROIplot_SW <- function(spq_summary, ROI = 2.15, ROI.width = 0.05,
                     ylim = c(min(tmp2$value), max(tmp2$value))) +
     geom_point(alpha = alpha, shape = 4) +
     theme_bw() +
-    ylab("Signal intensity") +
+    facet_grid(.~color) +
+    ylab("AUC") +
+    ggtitle("Peak detection and AUC quantification") +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          panel.background = element_blank())
+          panel.background = element_blank(),
+          legend.position = "none")
   if(!is.null(color.code))
     p2 <- p2 + scale_color_manual(values = color.code)
 
@@ -44,10 +51,13 @@ ROIplot_SW <- function(spq_summary, ROI = 2.15, ROI.width = 0.05,
                     ylim = c(min(tmp3$peakValue), max(tmp3$peakValue))) +
     geom_point(alpha = alpha, shape = 4) +
     theme_bw() +
-    ylab("Signal intensity") +
+    facet_grid(.~color) +
+    ylab("AUC") +
+    ggtitle("Peak grouping") +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          panel.background = element_blank())
+          panel.background = element_blank(),
+          legend.position = "none")
   if(!is.null(color.code))
     p3 <- p3 + scale_color_manual(values = color.code)
 
@@ -61,14 +71,19 @@ ROIplot_SW <- function(spq_summary, ROI = 2.15, ROI.width = 0.05,
                     ylim = c(min(tmp4$peakValue), max(tmp4$peakValue))) +
     geom_point(alpha = alpha, shape = 4) +
     theme_bw() +
-    ylab("Signal intensity") +
+    facet_grid(.~color) +
+    ylab("AUC") +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          panel.background = element_blank())
+          panel.background = element_blank(),
+          legend.position = "none")
   if(!is.null(color.code))
     p4 <- p4 + scale_color_manual(values = color.code)
 
 
-  p_comb <- egg::ggarrange(p1,p2,p3,p4, ncol = 1, draw = F)
+  plist <- list(p1,p2,p3,p4)
+  plist <- plist[incl.plots]
+  
+  p_comb <- egg::ggarrange(plots = plist, ncol = 1, draw = F)
   return(p_comb)
 }
