@@ -23,3 +23,6 @@ ggsave("analysis/v1/plots/rev_baer_L_2.16.pdf", plot = p, width = 9, height = 7)
 # 
 # ROIplot_SW(baer_H, ROI = 2.66, ROI.width = 0.025, incl.plots = 1:3,
 #            color.code = baerchi_colors_tmp, alpha = 0.25)
+# 
+# ROIplot_SW(baer_H, ROI = 3.25, ROI.width = 0.025, incl.plots = 1:3,
+#            color.code = baerchi_colors_tmp, alpha = 0.25)

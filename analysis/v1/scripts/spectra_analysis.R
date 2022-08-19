@@ -123,8 +123,13 @@ feat.PCA <- function(spq_summary, max.na = 0.025, min.SNR = 2) {
   keep_feat <- keep_feat[keep_feat %in% colnames(peaks.features)]
   # ft.tab.scaled <- speaq::SCANT(data.matrix = peaks.features[,keep_feat],
   #                               type = c("center","unit"))
-  ft.tab.scaled <- speaq::SCANT(data.matrix = peaks.features[,keep_feat],
-                                type = c("center","pareto"))
+  # ft.tab.scaled <- speaq::SCANT(data.matrix = peaks.features[,keep_feat],
+  #                               type = c("center","pareto"))
+  ft.tab.scaled <- apply(peaks.features[,keep_feat],2,
+                         function(x) {
+                           x <- (x - mean(x)) / sd(x)
+                           return(x)
+                         })
 
   message("PCA on ",ncol(ft.tab.scaled)," features.")
 
@@ -166,6 +171,8 @@ feat.PCA <- function(spq_summary, max.na = 0.025, min.SNR = 2) {
   dt.ica <- merge(dt.ica, spq_summary$color)
   dt.ica.loading <- cbind(data.table(feat = colnames(ft.tab.scaled)),
                           t(ft.ica$W))
+  # dt.ica.loading <- cbind(data.table(feat = colnames(ft.tab.scaled)),
+  #                         ft.ica$M)
   setnames(dt.ica.loading, paste0("V",1:nics),paste0("IC",1:nics))
   spq_summary$ICA <- list(scores = dt.ica,
                           loadings = dt.ica.loading,

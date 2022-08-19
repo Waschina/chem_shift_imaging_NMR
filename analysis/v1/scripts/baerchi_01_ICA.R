@@ -38,7 +38,7 @@ for(i in 1:ncol(comp_comb)) {
   
   scaling_fac <- 1
   tmpmat <- as.matrix(dt.ica.loading[feat %in% relfeats,.(get(IC_OI[1]),get(IC_OI[2]))])
-  for(isf in 2:50) {
+  for(isf in 2:5000) {
     tmptmpmat <- tmpmat * isf
     if(min(tmptmpmat[,1]) < min(tmp_scores[[IC_OI[1]]]) |
        max(tmptmpmat[,1]) > max(tmp_scores[[IC_OI[1]]]) |
@@ -118,7 +118,7 @@ for(i in 1:ncol(comp_comb)) {
   
   scaling_fac <- 1
   tmpmat <- as.matrix(dt.ica.loading[feat %in% relfeats,.(get(IC_OI[1]),get(IC_OI[2]))])
-  for(isf in 2:50) {
+  for(isf in 2:5000) {
     tmptmpmat <- tmpmat * isf
     if(min(tmptmpmat[,1]) < min(tmp_scores[[IC_OI[1]]]) |
        max(tmptmpmat[,1]) > max(tmp_scores[[IC_OI[1]]]) |

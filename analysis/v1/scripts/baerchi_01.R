@@ -70,7 +70,7 @@ dev.off()
 # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ #
 # PCA Plot only for (L) #
 # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ #
-PC_OI <- c("PC1","PC2")
+PC_OI <- c("PC1","PC3")
 
 dt.pca.loading <- copy(baer_L$PCA$loadings)
 tmp_filled <- baer_L$filled[,.(ppm = median(ppm),
@@ -101,7 +101,7 @@ p_scores <- ggplot(tmp_scores, aes(get(PC_OI[1]), get(PC_OI[2]), fill = color)) 
 
 scaling_fac <- 1
 tmpmat <- as.matrix(dt.pca.loading[feat %in% relfeats,.(get(PC_OI[1]),get(PC_OI[2]))])
-for(isf in 2:50) {
+for(isf in 2:5350) {
   tmptmpmat <- tmpmat * isf
   if(min(tmptmpmat[,1]) < min(tmp_scores[[PC_OI[1]]]) |
      max(tmptmpmat[,1]) > max(tmp_scores[[PC_OI[1]]]) |
