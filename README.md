@@ -17,8 +17,8 @@ This repository contains the point-wise binned NMR spectra as well as the data a
 
 ## Repository structure
 
-- directory `analysis/va/scripts/` - contains all R-scripts
-- directory `analysis/va/plots/` - should be created if not already there. Plots in PDF format will be saved here.
+- directory `analysis/v1/scripts/` - contains all R-scripts
+- directory `analysis/v1/plots/` - should be created if not already there. Plots in PDF format will be saved here.
 - directory `data/clean/` contains the sample meta information (e.g. coordinates of samples)
 - directory `data/raw/` contains the actual data (point-wise binned spectra). Files are gzipped plain text files. 
 
